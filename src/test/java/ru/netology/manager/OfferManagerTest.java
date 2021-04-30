@@ -3,6 +3,7 @@ package ru.netology.manager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.netology.domain.Offer;
+import ru.netology.domain.OfferByTravelTimeAscComparator;
 import ru.netology.repository.OfferRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,8 +17,8 @@ class OfferManagerTest {
     private Offer offer3 = new Offer(3, 30, "KXK", "VKO", 600);
     private Offer offer4 = new Offer(4, 40, "EIE", "KXK", 100);
     private Offer offer5 = new Offer(5, 30, "DME", "VKO", 500);
-    private Offer offer6 = new Offer(6, 15, "DME", "SVO", 400);
-    private Offer offer7 = new Offer(7, 20, "DME", "SVO", 700);
+    private Offer offer6 = new Offer(6, 15, "DME", "SVO", 300);
+    private Offer offer7 = new Offer(7, 20, "DME", "SVO", 200);
 
     @BeforeEach
     public void setUp() {
@@ -33,7 +34,7 @@ class OfferManagerTest {
     @Test
     void shouldFind() {
         Offer[] expected = new Offer[]{offer1, offer5};
-        Offer[] actual = manager.findByAirport("DME", "VKO");
+        Offer[] actual = manager.findByAirportSortByPrice("DME", "VKO");
 
         assertArrayEquals(expected, actual);
     }
@@ -41,7 +42,7 @@ class OfferManagerTest {
     @Test
     void shouldNoFind() {
         Offer[] expected = new Offer[0];
-        Offer[] actual = manager.findByAirport("DME", "DME");
+        Offer[] actual = manager.findByAirportSortByPrice("DME", "DME");
 
         assertArrayEquals(expected, actual);
     }
@@ -49,7 +50,7 @@ class OfferManagerTest {
     @Test
     void shouldFindNoRegister() {
         Offer[] expected = new Offer[]{offer4};
-        Offer[] actual = manager.findByAirport("eie", "kxk");
+        Offer[] actual = manager.findByAirportSortByPrice("eie", "kxk");
 
         assertArrayEquals(expected, actual);
     }
@@ -57,7 +58,16 @@ class OfferManagerTest {
     @Test
     void shouldFindAndSortByPrice() {
         Offer[] expected = new Offer[]{offer6, offer2, offer7};
-        Offer[] actual = manager.findByAirport("DME", "SVO");
+        Offer[] actual = manager.findByAirportSortByPrice("DME", "SVO");
+
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    void shouldFindAndSortByTravelTime() {
+        OfferByTravelTimeAscComparator offerByTravelTimeAscComparator = new OfferByTravelTimeAscComparator();
+        Offer[] expected = new Offer[]{offer7, offer6, offer2};
+        Offer[] actual = manager.findByAirportSortByTravelTime("DME", "SVO", offerByTravelTimeAscComparator);
 
         assertArrayEquals(expected, actual);
     }
